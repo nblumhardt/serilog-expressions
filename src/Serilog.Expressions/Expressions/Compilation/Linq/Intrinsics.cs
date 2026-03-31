@@ -73,12 +73,12 @@ static class Intrinsics
         return properties;
     }
 
-    public static LogEventPropertyValue ConstructStructureValue(List<LogEventProperty> properties)
+    public static LogEventPropertyValue ConstructStructureValue(List<LogEventProperty?> properties)
     {
         if (properties.Any(p => p == null || p.Value == Tombstone))
-            return new StructureValue(properties.Where(p => p != null && p.Value != Tombstone));
+            return new StructureValue(properties.Where(p => p != null && p.Value != Tombstone)!);
 
-        return new StructureValue(properties);
+        return new StructureValue(properties!);
     }
 
     public static List<LogEventProperty> ExtendStructureValueWithSpread(
@@ -88,7 +88,7 @@ static class Intrinsics
         if (content is StructureValue structure)
         {
             foreach (var property in structure.Properties)
-                if (property != null)
+                if (property != null!)
                     properties.Add(property);
         }
 
@@ -120,20 +120,17 @@ static class Intrinsics
 
     public static bool CoerceToScalarBoolean(LogEventPropertyValue value)
     {
-        if (value is ScalarValue sv && sv.Value is bool b)
+        if (value is ScalarValue { Value: bool b })
             return b;
         return false;
     }
 
     public static LogEventPropertyValue? IndexOfMatch(LogEventPropertyValue value, Regex regex)
     {
-        if (value is ScalarValue scalar &&
-            scalar.Value is string s)
+        if (value is ScalarValue { Value: string s })
         {
             var m = regex.Match(s);
-            if (m.Success)
-                return new ScalarValue(m.Index);
-            return NegativeOne;
+            return m.Success ? new ScalarValue(m.Index) : NegativeOne;
         }
 
         return null;
@@ -149,10 +146,7 @@ static class Intrinsics
 
     public static LogEventPropertyValue? GetLocalValue(EvaluationContext ctx, string localName)
     {
-        if (!Locals.TryGetValue(ctx.Locals, localName, out var value))
-            return null;
-
-        return value;
+        return Locals.TryGetValue(ctx.Locals, localName, out var value) ? value : null;
     }
 
     public static LogEventPropertyValue? TryGetStructurePropertyValue(StringComparison sc, LogEventPropertyValue maybeStructure, string name)

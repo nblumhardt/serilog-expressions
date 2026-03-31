@@ -165,6 +165,19 @@ static class ExpressionTokenParsers
         from alternative in Parse.Ref(() => Expr!)
         select (Expression)new CallExpression(false, Operators.RuntimeOpIfThenElse, condition, consequent, alternative);
 
+    static readonly TokenListParser<ExpressionToken, Expression> FilterMap =
+        from _ in Token.EqualTo(ExpressionToken.Each)
+        from bindings in Token.EqualTo(ExpressionToken.Identifier)
+                .Select(i => i.ToStringValue())
+                .AtLeastOnceDelimitedBy(Token.EqualTo(ExpressionToken.Comma))
+        from __ in Token.EqualTo(ExpressionToken.In)
+        from enumerable in Parse.Ref(() => Expr!)
+        from ___ in Token.EqualTo(ExpressionToken.Then)
+        from body in Parse.Ref(() => Expr!)
+        from ____ in Token.EqualTo(ExpressionToken.Else)
+        from alternative in Parse.Ref(() => Expr!)
+        select (Expression)new FilterMapExpression(bindings, enumerable, body, alternative);
+    
     static readonly TokenListParser<ExpressionToken, Expression> Literal =
         String
             .Or(Number)
@@ -180,7 +193,8 @@ static class ExpressionTokenParsers
             .Or(Function)
             .Or(ArrayLiteral)
             .Or(ObjectLiteral)
-            .Or(Conditional);
+            .Or(Conditional)
+            .Or(FilterMap);
 
     static readonly TokenListParser<ExpressionToken, Expression> Factor =
         (from lparen in Token.EqualTo(ExpressionToken.LParen)

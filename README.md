@@ -170,6 +170,7 @@ A typical set of operators is supported:
  * Indexers `a['b']` and `a[0]`
  * Wildcard indexing - `a[?]` any, and `a[*]` all
  * Conditional `if a then b else c` (all branches required; see also the section below on _conditional blocks_)
+ * Map and filter `each a in [1, 2, 3] then a + 1`
 
 Comparision operators that act on text all accept an optional postfix `ci` modifier to select case-insensitive comparisons:
 

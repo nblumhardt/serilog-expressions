@@ -239,6 +239,10 @@ if undefined() then 1 else 2         ⇶ 2
 if 'string' then 1 else 2            ⇶ 2
 if true then if false then 1 else 2 else 3 ⇶ 2
 
+// Map and filter
+each a in [1, 2, 3] then a + 1       ⇶ [2, 3, 4]
+each a in [1, 2, 3] then if a = 2 then undefined() else a ⇶ [1, 3]
+
 // ToString
 tostring(16)                         ⇶ '16'
 tostring('test')                     ⇶ 'test'

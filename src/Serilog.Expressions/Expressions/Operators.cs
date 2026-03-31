@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Security.Cryptography;
 using Serilog.Expressions.Ast;
 
 // ReSharper disable InconsistentNaming, MemberCanBePrivate.Global
